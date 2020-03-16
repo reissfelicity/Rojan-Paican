@@ -1,0 +1,144 @@
+package com.mycompany.roundrobin;
+import java.util.Scanner;
+/**
+ *
+ * @author Dwight
+ */
+public class RoundRobin
+{
+    public static void main(String args[])
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of processes");
+        int n = sc.nextInt();
+        int num[] = new int[n];         //burst time of all process
+        int proc[] = new int[n];        //same as the num[] but doesn't change which will be used to minus the waiting time later
+        int waitingTime[] = new int[n]; //waiting time for each process
+        for(int i = 0; i < n; i++)
+        {
+            System.out.print("Enter time  of process "+ (i+1)+": ");
+            num[i] = sc.nextInt();
+            proc[i] = num[i];
+        } 
+        System.out.print("Enter time quantum:");
+        int quantum = sc.nextInt(); //time quanta 
+        System.out.println("Algorithm Starts!");
+        int curr = 0; //current position to process
+        int totalTime = 0;
+        
+        while(CheckEmpty(num) == true)
+        {
+            if(num[curr] != 0)
+            {
+               for(int i = 0; i < quantum; i++)
+                {
+                    if(num[curr] > 0)
+                    {
+                        num[curr]--;
+                        totalTime++;
+                        if(i == quantum-1)
+                        {
+                            
+                            if(num[curr] == 0)
+                            {
+                                System.out.println("Process "+ (curr+1) + "end");
+                                waitingTime[curr] = totalTime -  proc[curr];
+                            }
+                            curr = ChangePosition(num,curr);
+                            break;
+                            
+                        }
+                            
+                    }
+                    else
+                    {
+                        System.out.println("Process "+ (curr+1) + "end");
+                        waitingTime[curr] = totalTime -  proc[curr];
+                        curr = ChangePosition(num,curr);
+                        break;
+                    }
+                } 
+            }
+        }
+        int totalWT = 0;
+        for(int i = 0; i < n; i++)
+            totalWT += waitingTime[i];
+        double averageWT = totalWT/n;
+        System.out.println("Process\t\tBurst Time\t\t  Waiting Time");    
+        for(int i = 0; i < n; i++)
+            System.out.println("  "+(i+1)+"  \t\t   "+proc[i]+" m/s \t\t     "+waitingTime[i]+" m/s");
+        System.out.print("Average Waiting Time: "+averageWT+" m/s");
+    }
+    //Check for empty processes
+    public static boolean CheckEmpty(int array[])
+    {
+        boolean check = false;
+        for(int i = 0; i < array.length; i++)
+        {
+            if(array[i] > 0)
+            {
+                check = true;
+                break;
+            }
+        }
+        if(check == false)
+        {
+            System.out.println("ALL PROCESSES are Finished");
+        }
+        return check;
+    }
+    public static int lastCurr(int array[], int curr)
+    {
+        int notEmpty = -1;
+        for(int i = 0; i < array.length-1; i++)
+        {
+            if(array[i] > 0)
+            {
+                notEmpty = i;
+                break;
+            }
+        }
+        return notEmpty;
+    }
+    public static int ChangePosition(int num[], int curr)
+    {
+        //check if it is the last in the line and proceeds to the top
+        //if there is still pending process 
+        if(curr == num.length-1)
+        {
+            if(lastCurr(num,curr) != -1)
+            {
+                curr = lastCurr(num,curr);
+            }
+        }
+        else
+        {
+            //check for the next process 
+            boolean next = false;
+            for(int i = curr+1; i < num.length; i++)
+            {
+                if(num[i] > 0)
+                {
+                    curr = i;
+                    next = true;
+                    break;
+                }
+                   
+            }
+            //check again if there is still pending process
+            if(next == false)
+            {
+                for(int i = 0; i < num.length; i++)
+                {
+                    if(num[i] > 0)
+                    {
+                        curr = i;
+                        break;
+                    }
+
+                }
+            }
+        }
+         return curr;
+    }
+}
