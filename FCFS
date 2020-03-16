@@ -1,0 +1,38 @@
+import java.util.Scanner;
+public class FCFS
+{
+    public static void main(String[] args) 
+    {
+        Scanner kb = new Scanner(System.in);
+        int waitingTime = 0;
+        int index = 0;
+        int avg;
+        int max;
+        int i;
+        
+        System.out.print("Enter size of procces: ");
+        max = kb.nextInt();
+        int array [] = new int[max];
+        
+        for(i = 0 ; i < array.length; i++)
+        {
+            System.out.print("Enter Burst Time: ");
+            array[i] = kb.nextInt();
+        }
+        
+        System.out.println("");
+        System.out.println("Process" + "\t\tBurst Time" + "\tWaiting Time");
+        int totalWait = 0;
+        for(int y = 1 ; y <= array.length; y++)
+        {
+            totalWait += waitingTime;
+            System.out.println("P" + y + "\t\t" + array[index] + "\t\t" + waitingTime);
+            waitingTime += array[index];
+            index++;
+        }
+        double process = max;
+        double averageTime = totalWait/process;
+        System.out.println(averageTime);
+    }
+    
+}
